@@ -7,7 +7,7 @@ import { AuthServiceHandler } from "src/handlers/auth";
 export async function createGrpcServer(): Promise<grpc.Server> {
     const PROTO_PATH = path.resolve(__dirname, "../proto/auth.proto");
     const packageDefinition = await protoLoader.load(PROTO_PATH, {
-        keepCase: true,
+        keepCase: false,
         longs: String,
         enums: String,
         defaults: true,

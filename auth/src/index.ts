@@ -9,7 +9,8 @@ let grpcServer: grpc.Server;
 async function startServer() {
     logger.info("Starting auth service...");
     try {
-        await dbPool.getConnection();
+        const conn = await dbPool.getConnection();
+        conn.release();
         logger.info("Database connection established.");
 
         const grpcServerAddress = `0.0.0.0:${GRPC_PORT}`;
