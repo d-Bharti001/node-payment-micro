@@ -4,6 +4,14 @@
     "description": "money movement service for payment microservices",
     "main": "src/index.ts",
     "scripts": {
+        "build": "rm -rf build/ && tsc -p tsconfig.json && tsc-alias -p tsconfig.json && mkdir -p build/proto && cp proto/money_movement.proto build/proto/money_movement.proto",
+        "dev": "tsx watch --env-file=.env src/index.ts",
+        "migrate:create": "node --env-file=.env node_modules/.bin/db-migrate create",
+        "migrate:up": "node --env-file=.env node_modules/.bin/db-migrate up",
+        "migrate:down": "node --env-file=.env node_modules/.bin/db-migrate down",
+        "proto:gen": "proto-loader-gen-types --grpcLib=@grpc/grpc-js --longs=String --enums=String --defaults --oneofs --outDir=proto/ proto/*.proto",
+        "seed": "tsx --env-file=.env scripts/seed.ts",
+        "start": "node --env-file=.env build/src/index.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",

@@ -1,0 +1,11 @@
+{
+    "defaultEnv": "current",
+    "current": {
+        "driver": "mysql",
+        "host": { "ENV": "MYSQL_HOST" },
+        "port": { "ENV": "MYSQL_PORT" },
+        "database": { "ENV": "MYSQL_DATABASE" },
+        "user": { "ENV": "MYSQL_USER" },
+        "password": { "ENV": "MYSQL_PASSWORD" }
+    }
+}
