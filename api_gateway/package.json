@@ -1,0 +1,27 @@
+{
+    "name": "api_gateway",
+    "version": "1.0.0",
+    "description": "api gateway for payment microservices",
+    "main": "src/server.ts",
+    "scripts": {
+        "build": "rm -rf build/ && tsc -p tsconfig.json && tsc-alias -p tsconfig.json && mkdir -p build/proto/auth build/proto/money_movement && cp proto/auth/auth.proto build/proto/auth/auth.proto && cp proto/money_movement/money_movement.proto build/proto/money_movement/money_movement.proto",
+        "dev": "tsx watch --env-file=.env src/server.ts",
+        "proto:copy": "mkdir -p proto/auth proto/money_movement && cp -r ../auth/proto/* proto/auth && cp -r ../money_movement/proto/* proto/money_movement",
+        "start": "node --env-file=.env build/src/server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@grpc/grpc-js": "^1.14.4",
+        "@grpc/proto-loader": "^0.8.1",
+        "express": "^5.2.1"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@types/node": "^26.4.0",
+        "tsc-alias": "^1.9.2",
+        "tsx": "^4.23.12",
+        "typescript": "^7.0.2"
+    }
+}
