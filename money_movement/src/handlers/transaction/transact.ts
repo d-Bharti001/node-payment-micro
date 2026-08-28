@@ -12,15 +12,24 @@ import {
     isDuplicateEntryError,
 } from "src/utils/errors";
 
+// Positive integer, no sign, no decimal point, no leading zeros/scientific notation
+const POSITIVE_INTEGER_PATTERN = /^[1-9]\d*$/;
+
 export const transact: MoneyMovementServiceHandlers["Transact"] = async function (call, callback) {
     try {
         const { idempotencyKey, fromUserId, toUserId, amount: amountStr } = call.request;
 
-        if (!idempotencyKey || !fromUserId || !toUserId || !amountStr || BigInt(amountStr) <= 0) {
+        if (
+            !idempotencyKey ||
+            !fromUserId ||
+            !toUserId ||
+            !amountStr ||
+            !POSITIVE_INTEGER_PATTERN.test(amountStr)
+        ) {
             return callback({
                 code: grpc.status.INVALID_ARGUMENT,
                 message:
-                    "Idempotency key, From User ID, To User ID, and a positive amount are required",
+                    "Idempotency key, From User ID, To User ID, and a positive integer amount are required",
             });
         }
 
