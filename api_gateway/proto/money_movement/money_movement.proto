@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package money_movement;
+
+service MoneyMovementService {
+    rpc Transact(TransactRequest) returns (TransactResponse) {}
+}
+
+message TransactRequest {
+    string idempotency_key = 1;
+    string from_user_id = 2;
+    string to_user_id = 3;
+    int64 amount = 4;
+}
+
+message TransactResponse {
+    int64 transaction_id = 1;
+}
