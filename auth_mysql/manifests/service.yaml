@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-mysql-service
+  labels:
+    app: auth-mysql
+spec:
+  clusterIP: None
+  selector:
+    app: auth-mysql
+  ports:
+    - port: 3306
+      name: auth-mysql

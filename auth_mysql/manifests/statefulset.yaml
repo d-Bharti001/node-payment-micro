@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: auth-mysql
+  labels:
+    app: auth-mysql
+spec:
+  serviceName: "auth-mysql-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-mysql
+  template:
+    metadata:
+      labels:
+        app: auth-mysql
+    spec:
+      containers:
+        - name: auth-mysql
+          image: mysql:8.4
+          envFrom:
+            - configMapRef:
+                name: auth-mysql-config
+            - secretRef:
+                name: auth-mysql-root-credentials
+            - secretRef:
+                name: auth-mysql-credentials
+          ports:
+            - containerPort: 3306
+              name: auth-mysql
+          volumeMounts:
+            - name: auth-mysql-data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: auth-mysql-data
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
