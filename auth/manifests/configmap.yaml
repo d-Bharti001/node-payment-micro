@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-config
+data:
+  NODE_ENV: "development"
+  MYSQL_HOST: "auth-mysql-0.auth-mysql-service"
+  MYSQL_PORT: "3306"
+  GRPC_PORT: "9000"

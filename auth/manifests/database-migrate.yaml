@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: auth-migrate-init
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: auth-migrate-init
+          image: dbharti001/auth-nodejs:1.0.0
+          command: ["node", "node_modules/.bin/db-migrate", "up"]
+          envFrom:
+            - configMapRef:
+                name: auth-config
+            - configMapRef:
+                name: auth-mysql-config
+            - secretRef:
+                name: auth-mysql-credentials
