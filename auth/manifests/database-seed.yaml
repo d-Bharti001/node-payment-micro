@@ -9,7 +9,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: auth-migrate-seed
-          image: dbharti001/auth-nodejs
+          image: dbharti001/auth-nodejs:1.0.0
           command: ["node", "build/scripts/seed.js"]
           envFrom:
             - configMapRef:
