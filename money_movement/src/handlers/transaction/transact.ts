@@ -4,6 +4,7 @@ import type { MoneyMovementServiceHandlers } from "proto/money_movement/MoneyMov
 import { withTransaction } from "src/database/withTransaction";
 import { creditBalance } from "src/repository/balance/creditBalance";
 import { debitBalance } from "src/repository/balance/debitBalance";
+import { insertOutboxEvent } from "src/repository/outbox/insertOutboxEvent";
 import { getByIdempotencyKey } from "src/repository/transaction/getByIdempotencyKey";
 import { insertTransaction } from "src/repository/transaction/insertTransaction";
 import {
@@ -63,6 +64,16 @@ export const transact: MoneyMovementServiceHandlers["Transact"] = async function
                     await creditBalance(conn, toUserId, amount);
                     await debitBalance(conn, fromUserId, amount);
                 }
+
+                await insertOutboxEvent(conn, {
+                    key: String(insertId),
+                    payload: {
+                        transactionId: insertId,
+                        fromUserId,
+                        toUserId,
+                        amount: amount.toString(),
+                    },
+                });
 
                 return insertId;
             } catch (err) {
