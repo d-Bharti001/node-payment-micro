@@ -6,7 +6,7 @@ metadata:
     app: kafka
 spec:
   serviceName: "kafka-service"
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: kafka
@@ -23,7 +23,6 @@ spec:
             - |
               export KAFKA_NODE_ID=${HOSTNAME##*-}
               export KAFKA_ADVERTISED_LISTENERS="PLAINTEXT://${HOSTNAME}.kafka-service:9092"
-              export KAFKA_CONTROLLER_QUORUM_VOTERS="${KAFKA_NODE_ID}@${HOSTNAME}.kafka-service:9093"
               exec /etc/kafka/docker/run
           envFrom:
             - configMapRef:
