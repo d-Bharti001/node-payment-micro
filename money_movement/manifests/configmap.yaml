@@ -7,6 +7,6 @@ data:
   MYSQL_HOST: "money-movement-mysql-0.money-movement-mysql-service"
   MYSQL_PORT: "3306"
   GRPC_PORT: "9000"
-  KAFKA_BROKERS: "kafka:9092"
+  KAFKA_BROKERS: "kafka-0.kafka-service:9092"
   OUTBOX_POLL_INTERVAL_MS: "1000"
   OUTBOX_POLL_BATCH_SIZE: "20"
