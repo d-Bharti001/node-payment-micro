@@ -1,6 +1,6 @@
 import { Kafka } from "kafkajs";
 
-import { KAFKA_BROKERS, KAFKA_CLIENT_ID, KAFKA_GROUP_ID, KAFKA_TOPIC } from "src/config/config";
+import { KAFKA_BROKERS, KAFKA_CLIENT_ID, KAFKA_GROUP_ID } from "src/config/config";
 
 const kafka = new Kafka({
     clientId: KAFKA_CLIENT_ID,
