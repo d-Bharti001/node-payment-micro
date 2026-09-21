@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ledger
+  labels:
+    app: ledger
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ledger
+  template:
+    metadata:
+      labels:
+        app: ledger
+    spec:
+      containers:
+        - name: ledger
+          image: dbharti001/ledger-nodejs:1.0.0
+          envFrom:
+            - configMapRef:
+                name: ledger-config
+            - configMapRef:
+                name: ledger-mysql-config
+            - secretRef:
+                name: ledger-mysql-credentials
