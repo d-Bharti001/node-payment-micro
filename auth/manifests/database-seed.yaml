@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: auth-migrate-seed
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: auth-migrate-seed
+          image: dbharti001/auth-nodejs:1.0.0
+          command: ["node", "build/scripts/seed.js"]
+          envFrom:
+            - configMapRef:
+                name: auth-config
+            - configMapRef:
+                name: auth-mysql-config
+            - secretRef:
+                name: auth-mysql-credentials

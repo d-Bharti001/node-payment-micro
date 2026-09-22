@@ -1,0 +1,29 @@
+{
+    "name": "ledger",
+    "version": "1.0.0",
+    "description": "ledger (accounting) service for payment microservices",
+    "main": "src/index.ts",
+    "scripts": {
+        "build": "rm -rf build/ && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+        "dev": "tsx watch --env-file=.env src/index.ts",
+        "migrate:create": "node --env-file=.env node_modules/.bin/db-migrate create",
+        "migrate:up": "node --env-file=.env node_modules/.bin/db-migrate up",
+        "migrate:down": "node --env-file=.env node_modules/.bin/db-migrate down",
+        "start": "node --env-file=.env build/src/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^26.6.2",
+        "tsc-alias": "^1.9.5",
+        "tsx": "^4.23.15",
+        "typescript": "^7.0.2"
+    },
+    "dependencies": {
+        "db-migrate": "^0.11.14",
+        "db-migrate-mysql": "^3.0.0",
+        "kafkajs": "^2.2.4",
+        "mysql2": "^3.24.4"
+    }
+}

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: money-movement-mysql
+  labels:
+    app: money-movement-mysql
+spec:
+  serviceName: "money-movement-mysql-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: money-movement-mysql
+  template:
+    metadata:
+      labels:
+        app: money-movement-mysql
+    spec:
+      containers:
+        - name: money-movement-mysql
+          image: mysql:8.4
+          envFrom:
+            - configMapRef:
+                name: money-movement-mysql-config
+            - secretRef:
+                name: money-movement-mysql-root-credentials
+            - secretRef:
+                name: money-movement-mysql-credentials
+          ports:
+            - containerPort: 3306
+              name: money-movement-mysql
+          volumeMounts:
+            - name: money-movement-data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: money-movement-data
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi

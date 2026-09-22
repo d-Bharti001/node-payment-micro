@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: money-movement-migrate-init
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: money-movement-migrate-init
+          image: dbharti001/money-movement-nodejs:1.0.0
+          command: ["node", "node_modules/.bin/db-migrate", "up"]
+          envFrom:
+            - configMapRef:
+                name: money-movement-config
+            - configMapRef:
+                name: money-movement-mysql-config
+            - secretRef:
+                name: money-movement-mysql-credentials
