@@ -1,14 +1,13 @@
 import "src/utils/logger";
-import dbPool from "src/database/connection";
 import { startConsumer, stopConsumer } from "src/kafka/consumer";
 import { messageHandler } from "src/messageHandler";
+import { closeSmtpTransporter, verifySmtpTransporter } from "src/mailer/transporter";
 
 async function start() {
-    logger.info("Starting ledger service...");
+    logger.info("Starting email service...");
     try {
-        logger.info("Establishing database connection...");
-        const conn = await dbPool.getConnection();
-        conn.release();
+        logger.info("Verifying SMTP connection...");
+        await verifySmtpTransporter();
 
         logger.info("Starting Kafka consumer...");
         await startConsumer(messageHandler);
@@ -32,19 +31,11 @@ async function shutdown(signal?: string) {
         process.exit(1);
     }, 10000);
 
-    logger.info("Stopping Kafka consumer...");
     await stopConsumer();
     logger.info("Kafka consumer stopped.");
 
-    if (dbPool) {
-        logger.info("Closing database connections...");
-        try {
-            await dbPool.end();
-            logger.info("Database connection pool closed.");
-        } catch (err) {
-            logger.error("Error while closing database pool :::", err);
-        }
-    }
+    closeSmtpTransporter();
+    logger.info("SMTP transporter closed.");
 
     clearTimeout(forceExitTimeout);
     logger.info("System exited cleanly. Goodbye.");

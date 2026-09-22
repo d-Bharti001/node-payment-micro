@@ -14,7 +14,7 @@ const consumer = kafka.consumer({
 
 let connected = false;
 
-export async function startConsumer(messageHandler: EachMessageHandler) {
+export async function startConsumer(messageHandler: EachMessageHandler): Promise<void> {
     if (connected) {
         return;
     }
