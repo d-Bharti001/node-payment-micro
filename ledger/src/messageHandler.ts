@@ -1,13 +1,9 @@
 import type { EachMessagePayload } from "kafkajs";
 import "src/utils/logger";
-import { KAFKA_TOPIC } from "src/config/config";
-import { consumer } from "src/kafka/consumer";
 import { insertLedgerEntries } from "src/repository/ledger/insertLedgerEntries";
 import { PaymentsTopicMessageValue } from "src/kafka/payload";
 
 const POSITIVE_INTEGER_PATTERN = /^(0|[1-9]\d*)$/;
-
-let consumerConnected = false;
 
 function decodePaymentsMessage(raw: Buffer): PaymentsTopicMessageValue {
     const parsed = JSON.parse(raw.toString());
@@ -45,7 +41,7 @@ function decodePaymentsMessage(raw: Buffer): PaymentsTopicMessageValue {
     };
 }
 
-async function messageHandler({ message }: EachMessagePayload) {
+export async function messageHandler({ message }: EachMessagePayload) {
     if (message.value === null) {
         logger.warn("received payments message with no value, skipping");
         return;
@@ -66,22 +62,4 @@ async function messageHandler({ message }: EachMessagePayload) {
         amount: payload.amount,
         transactionTimestamp: payload.createdAt,
     });
-}
-
-export async function startConsumer() {
-    await consumer.connect();
-    consumerConnected = true;
-
-    await consumer.subscribe({
-        topic: KAFKA_TOPIC,
-        fromBeginning: true,
-    });
-
-    await consumer.run({ eachMessage: messageHandler });
-}
-
-export async function stopConsumer() {
-    if (consumerConnected) {
-        await consumer.disconnect();
-    }
 }
