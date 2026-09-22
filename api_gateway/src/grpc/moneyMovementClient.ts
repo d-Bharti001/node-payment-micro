@@ -23,6 +23,15 @@ const client: MoneyMovementServiceClient = new proto.money_movement.MoneyMovemen
     grpc.credentials.createInsecure(),
 );
 
+export function getBalance(userId: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        client.getBalance({ userId }, (err, response) => {
+            if (err) return reject(err);
+            resolve(response!.balance!);
+        });
+    });
+}
+
 export interface TransactParams {
     idempotencyKey: string;
     fromUserId: string;
