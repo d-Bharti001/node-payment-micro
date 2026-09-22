@@ -1,6 +1,7 @@
 import "src/utils/logger";
 import dbPool from "src/database/connection";
-import { startConsumer, stopConsumer } from "src/consumer";
+import { startConsumer, stopConsumer } from "src/kafka/consumer";
+import { messageHandler } from "src/messageHandler";
 
 async function start() {
     logger.info("Starting ledger service...");
@@ -10,7 +11,7 @@ async function start() {
         conn.release();
 
         logger.info("Starting Kafka consumer...");
-        await startConsumer();
+        await startConsumer(messageHandler);
     } catch (err) {
         logger.error("Service failed to start :::", err);
         shutdown();
