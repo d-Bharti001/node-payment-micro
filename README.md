@@ -15,7 +15,7 @@ flowchart LR
     Auth --> AuthDB[("auth_mysql")]
     MoneyMovement --> MoneyMovementDB[("money_movement_mysql")]
 
-    MoneyMovement -->|outbox relay| Kafka[("kafka: payments topic")]
+    MoneyMovement -->|outbox relay| Kafka([kafka: payments topic])
 
     Kafka --> Ledger[ledger]
     Kafka --> Email[email]
@@ -24,27 +24,27 @@ flowchart LR
     Email --> Mailpit[email_mailpit]
 ```
 
-`api_gateway` is the only service reachable from outside the cluster. `ledger` and `email` are independent consumers of the same `payments` topic, in separate consumer groups, so each sees every event regardless of the other.
+`api_gateway` is the only service reachable from outside the cluster. `ledger` and `email` are independent consumers of the same `payments` topic, in separate consumer groups.
 
 ## Services
 
-| Service                                                | Description                                                                                                                              |
-| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `auth`                                                 | Authenticates users and issues/validates JWTs.                                                                                           |
-| `money_movement`                                       | Executes account-to-account transfers and exposes balance lookups.                                                                       |
-| `ledger`                                               | Kafka consumer that records a debit/credit audit-trail row for every transaction.                                                        |
-| `email`                                                | Kafka consumer that sends payment-notification emails (via Mailpit locally, in place of a real SMTP provider).                           |
-| `api_gateway`                                          | The HTTP/REST facade - exposes `/login`, `/balance`, and `/transact`, translating them into gRPC calls to `auth` and `money_movement`.   |
-| `kafka`                                                | Self-hosted 2-node Kafka cluster (KRaft mode, no ZooKeeper) carrying the `payments` topic.                                               |
-| `email_mailpit`                                        | [Mailpit](https://mailpit.axllent.org/) - a fake local SMTP server + web UI, used instead of a real mail provider for local development. |
-| `auth_mysql` / `money_movement_mysql` / `ledger_mysql` | Dedicated MySQL instance per service - each service owns its own data, no shared database.                                               |
+| Service                                                | Description                                                                                                                            |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`                                                 | Authenticates users and issues/validates JWTs.                                                                                         |
+| `money_movement`                                       | Executes account-to-account transfers and exposes balance lookups.                                                                     |
+| `ledger`                                               | Kafka consumer that records a debit/credit audit-trail row for every transaction.                                                      |
+| `email`                                                | Kafka consumer that sends payment-notification emails (via Mailpit locally).                                                           |
+| `api_gateway`                                          | The HTTP/REST facade - exposes `/login`, `/balance`, and `/transact`, translating them into gRPC calls to `auth` and `money_movement`. |
+| `kafka`                                                | Self-hosted Kafka cluster (KRaft mode) carrying the `payments` topic.                                                                  |
+| `email_mailpit`                                        | [Mailpit](https://mailpit.axllent.org/) - a fake local SMTP server + web UI, used for local development.                               |
+| `auth_mysql` / `money_movement_mysql` / `ledger_mysql` | Dedicated MySQL instance per service - each service owns its own database.                                                             |
 
 ## Design highlights
 
-A few things worth calling out about how correctness is handled under concurrency and partial failure, rather than assumed away:
+A few things worth calling out about how correctness is handled under concurrency and partial failure:
 
 - **Idempotency.** Every `/transact` call requires a client-generated `Idempotency-Key`. It's enforced with a `UNIQUE(from_user_id, idempotency_key)` constraint on the `transactions` table - the _insert itself_ is the atomic check-and-reserve, not a separate SELECT-then-INSERT (which would race). A retried request with the same key never re-processes; it just returns the original attempt's result, even under concurrent retries.
-- **Transactional outbox.** `money_movement` never publishes to Kafka directly from the request path. It writes an event to its own `outbox` table in the _same database transaction_ as the balance update, so the two can never disagree - no world where money moves but no event fires, or an event fires for a transaction that got rolled back. A separate outbox-relay process polls that table and publishes to Kafka, marking rows published only after the send is confirmed - so a Kafka outage delays delivery but can never lose or duplicate-corrupt the underlying transaction record.
+- **Transactional outbox.** `money_movement` never publishes to Kafka directly from the request path. It writes an event to its own `outbox` table in the _same database transaction_ as the balance update - eliminating the cases where money moves but no event fires, or an event fires for a transaction that got rolled back. A separate outbox-relay process polls that table and publishes to Kafka - so a Kafka outage delays delivery but can never lose the underlying transaction record.
 - **Deadlock-free balance locking.** A transfer locks both the sender's and recipient's balance rows in a fixed order (ascending by user ID, regardless of who's debited or credited), so two concurrent transfers between the same pair of users - in either direction - can't deadlock against each other.
 - **No shared database.** Each service owns its own MySQL instance and schema; nothing reaches across a service boundary to query another service's tables directly.
 
@@ -81,7 +81,7 @@ A few things worth calling out about how correctness is handled under concurrenc
 
    Output: `{ "transaction_id": "<id>" }`
 
-   This single call triggers the whole system: `money_movement` debits/credits the balances and writes an outbox event → the outbox relay publishes it to Kafka → `ledger` records the debit/credit pair → `email` sends a notification to both `buyer@email.com` and `georgio@email.com` (viewable in Mailpit).
+   This single call triggers the whole system: `money_movement` debits/credits the balances and writes an outbox event... the outbox relay publishes it to Kafka... `ledger` records the debit/credit pair... `email` sends a notification to both the payer and the payee (viewable in Mailpit dashboard).
 
 Seeded accounts for local testing: `buyer@email.com` / `buyer123` (starting balance 500000) and `georgio@email.com` / `georgio123` (starting balance 0).
 
@@ -94,7 +94,7 @@ Seeded accounts for local testing: `buyer@email.com` / `buyer123` (starting bala
 
 ## Building & pushing images
 
-Each service builds and tags independently.
+Each service builds and tags independently. Sample commands:
 
 ```
 docker build -t dbharti001/auth-nodejs:1.0.0 auth/
@@ -112,8 +112,6 @@ docker push dbharti001/email-nodejs:1.0.0
 docker build -t dbharti001/payment-api-gateway-nodejs:1.0.0 api_gateway/
 docker push dbharti001/payment-api-gateway-nodejs:1.0.0
 ```
-
-(`email_mailpit` uses the public `axllent/mailpit` image directly - nothing to build.)
 
 ## Starting the services
 
@@ -194,5 +192,3 @@ then open `http://localhost:8025`.
 | `just db-ledger`         | Opens a MySQL shell into `ledger`'s database (the debit/credit audit trail).           |
 | `just mailpit-dashboard` | Port-forwards Mailpit's web UI to `http://localhost:8025`.                             |
 | `just logs <service>`    | Tails a service's logs by its `app` label, e.g. `just logs ledger`.                    |
-
-All three `db-*` recipes connect using each database's own least-privilege application user (not root) - no credentials are typed, hardcoded, or logged to your shell history.
