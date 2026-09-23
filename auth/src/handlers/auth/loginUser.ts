@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 import type { AuthServiceHandlers } from "proto/auth/AuthService";
 import { getUserByUserId } from "src/repository/user/getUser";
 import { createJWT } from "src/utils/jwt";

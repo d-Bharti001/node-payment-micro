@@ -1,4 +1,4 @@
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 import "src/utils/logger";
 import dbPool from "src/database/connection";
 import { createGrpcServer } from "src/server";

@@ -27,15 +27,15 @@ spec:
                 name: money-movement-mysql-credentials
           ports:
             - containerPort: 3306
-              name: money-movement-mysql
+              name: money-mv-mysql
           volumeMounts:
             - name: money-movement-data
               mountPath: /var/lib/mysql
   volumeClaimTemplates:
     - metadata:
         name: money-movement-data
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 1Gi
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
