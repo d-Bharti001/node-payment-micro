@@ -141,10 +141,10 @@ Then, in a separate terminal (minikube's Ingress isn't reachable from the host w
 minikube tunnel
 ```
 
-And map the Ingress hostname - get the cluster IP with `minikube ip`, then add to `/etc/hosts`:
+And map the Ingress hostname by adding an entry to `/etc/hosts`:
 
 ```
-<minikube ip>  api.node-payment-micro.local
+127.0.0.1  api.node-payment-micro.local
 ```
 
 ## Stopping the services
