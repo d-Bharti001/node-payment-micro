@@ -18,4 +18,3 @@ spec:
                 name: money-movement-mysql-config
             - secretRef:
                 name: money-movement-mysql-credentials
-          

@@ -1,4 +1,4 @@
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 import dbPool from "src/database/connection";
 import { IUserRow } from "./model";
 import { ResourceNotFoundError } from "src/utils/errors";

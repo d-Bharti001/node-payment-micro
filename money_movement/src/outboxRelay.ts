@@ -17,7 +17,7 @@ async function pollOnce(): Promise<void> {
 
         const messages: KafkaTopicMessage[] = rows.map((row) => {
             const value: any = {
-                created_at: row.created_at,
+                createdAt: row.created_at,
             };
 
             // For key-value style payload, load it into the value as it is.

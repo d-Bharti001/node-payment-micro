@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ledger-migrate-init
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ledger-migrate-init
+          image: dbharti001/ledger-nodejs:1.0.0
+          command: ["node", "node_modules/.bin/db-migrate", "up"]
+          envFrom:
+            - configMapRef:
+                name: ledger-config
+            - configMapRef:
+                name: ledger-mysql-config
+            - secretRef:
+                name: ledger-mysql-credentials

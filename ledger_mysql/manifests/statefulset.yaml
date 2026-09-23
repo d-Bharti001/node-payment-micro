@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ledger-mysql
+  labels:
+    app: ledger-mysql
+spec:
+  serviceName: "ledger-mysql-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ledger-mysql
+  template:
+    metadata:
+      labels:
+        app: ledger-mysql
+    spec:
+      containers:
+        - name: ledger-mysql
+          image: mysql:8.4
+          envFrom:
+            - configMapRef:
+                name: ledger-mysql-config
+            - secretRef:
+                name: ledger-mysql-root-credentials
+            - secretRef:
+                name: ledger-mysql-credentials
+          ports:
+            - containerPort: 3306
+              name: ledger-mysql
+          volumeMounts:
+            - name: ledger-data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: ledger-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
