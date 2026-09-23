@@ -34,8 +34,8 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: ledger-data
-        spec:
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 1Gi
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
