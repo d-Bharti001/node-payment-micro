@@ -4,29 +4,11 @@ A payments platform built as independent Node.js/TypeScript microservices, commu
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    Client([Client]) -->|HTTP| Ingress[Ingress]
-    Ingress --> Gateway[api_gateway]
-
-    Gateway -->|"gRPC: LoginUser, ValidateToken"| Auth[auth]
-    Gateway -->|"gRPC: Transact, GetBalance"| MoneyMovement[money_movement]
-
-    Auth --> AuthDB[("auth_mysql")]
-    MoneyMovement --> MoneyMovementDB[("money_movement_mysql")]
-
-    MoneyMovement -->|outbox relay| Kafka([kafka: payments topic])
-
-    Kafka --> Ledger[ledger]
-    Kafka --> Email[email]
-
-    Ledger --> LedgerDB[("ledger_mysql")]
-    Email --> Mailpit[email_mailpit]
-```
+<img src="./node-payment-micro.svg">
 
 `api_gateway` is the only service reachable from outside the cluster. `ledger` and `email` are independent consumers of the same `payments` topic, in separate consumer groups.
 
-## Services
+### Services
 
 | Service                                                | Description                                                                                                                            |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -39,7 +21,7 @@ flowchart LR
 | `email_mailpit`                                        | [Mailpit](https://mailpit.axllent.org/) - a fake local SMTP server + web UI, used for local development.                               |
 | `auth_mysql` / `money_movement_mysql` / `ledger_mysql` | Dedicated MySQL instance per service - each service owns its own database.                                                             |
 
-## Design highlights
+### Design highlights
 
 A few things worth calling out about how correctness is handled under concurrency and partial failure:
 
@@ -85,14 +67,14 @@ A few things worth calling out about how correctness is handled under concurrenc
 
 Seeded accounts for local testing: `buyer@email.com` / `buyer123` (starting balance 500000) and `georgio@email.com` / `georgio123` (starting balance 0).
 
-## Prerequisites
+### Prerequisites
 
 - Docker
 - A local Kubernetes cluster - these instructions assume [minikube](https://minikube.sigs.k8s.io/) with its `ingress` addon enabled
 - `kubectl`
 - [`just`](https://github.com/casey/just) - used to run every deployment/inspection command below
 
-## Building & pushing images
+### Building & pushing images
 
 Each service builds and tags independently. Sample commands:
 
@@ -113,7 +95,7 @@ docker build -t dbharti001/payment-api-gateway-nodejs:1.0.0 api_gateway/
 docker push dbharti001/payment-api-gateway-nodejs:1.0.0
 ```
 
-## Starting the services
+### Starting the services
 
 ```
 minikube start
@@ -141,13 +123,13 @@ Then, in a separate terminal (minikube's Ingress isn't reachable from the host w
 minikube tunnel
 ```
 
-And map the Ingress hostname - get the cluster IP with `minikube ip`, then add to `/etc/hosts`:
+And map the Ingress hostname by adding an entry to `/etc/hosts`:
 
 ```
-<minikube ip>  api.node-payment-micro.local
+127.0.0.1  api.node-payment-micro.local
 ```
 
-## Stopping the services
+### Stopping the services
 
 ```
 just stop-services
@@ -155,9 +137,9 @@ just stop-services
 
 Stops everything in reverse dependency order.
 
-## Accessing from the browser
+### Accessing from the browser
 
-### API Gateway
+#### API Gateway
 
 **Swagger UI** (the api_gateway's interactive API docs) - once the Ingress + tunnel + hosts entry above are set up:
 
@@ -173,7 +155,7 @@ kubectl port-forward -n node-payment-micro svc/api-gateway-service 1337:1337
 
 then open `http://localhost:1337/docs/swagger`.
 
-### Emails
+#### Emails
 
 **Mailpit** (see emails the `email` service has sent):
 
@@ -183,7 +165,7 @@ just mailpit-dashboard
 
 then open `http://localhost:8025`.
 
-## Local inspection
+### Local inspection
 
 | Command                  | What it does                                                                           |
 | ------------------------ | -------------------------------------------------------------------------------------- |
