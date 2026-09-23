@@ -1,4 +1,4 @@
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 import jwt from "jsonwebtoken";
 
 import { JWT_SIGNING_KEY } from "src/config/config";

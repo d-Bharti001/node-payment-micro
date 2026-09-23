@@ -1,4 +1,4 @@
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 import type { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { ResourceNotFoundError } from "src/utils/errors";
 
