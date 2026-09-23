@@ -1,4 +1,4 @@
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 import type { AuthServiceHandlers } from "proto/auth/AuthService";
 import { getUserByUserId } from "src/repository/user/getUser";
 import { JwtError, ResourceNotFoundError } from "src/utils/errors";

@@ -1,4 +1,4 @@
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 import type { MoneyMovementServiceHandlers } from "proto/money_movement/MoneyMovementService";
 
 import dbPool from "src/database/connection";
