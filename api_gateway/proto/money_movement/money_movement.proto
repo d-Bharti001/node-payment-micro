@@ -3,7 +3,16 @@ syntax = "proto3";
 package money_movement;
 
 service MoneyMovementService {
+    rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {}
     rpc Transact(TransactRequest) returns (TransactResponse) {}
+}
+
+message GetBalanceRequest {
+    string user_id = 1;
+}
+
+message GetBalanceResponse {
+    int64 balance = 1;
 }
 
 message TransactRequest {

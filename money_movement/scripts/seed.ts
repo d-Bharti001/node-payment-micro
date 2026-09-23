@@ -14,9 +14,9 @@ async function seedBalance({ userId, balance }: SeedUserBalance): Promise<void> 
     await dbPool.execute(
         `
         INSERT INTO balances (user_id, balance)
-        VALUES (?, ?) AS init_balance
+        VALUES (?, ?)
         ON DUPLICATE KEY
-        UPDATE balance = init_balance.balance
+        UPDATE user_id = user_id
         `,
         [userId, balance.toString()],
     );

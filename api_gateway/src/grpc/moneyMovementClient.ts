@@ -1,6 +1,6 @@
 import path from "path";
-import grpc from "@grpc/grpc-js";
-import protoLoader from "@grpc/proto-loader";
+import * as grpc from "@grpc/grpc-js";
+import * as protoLoader from "@grpc/proto-loader";
 import type { ProtoGrpcType } from "proto/money_movement/money_movement";
 import type { MoneyMovementServiceClient } from "proto/money_movement/money_movement/MoneyMovementService";
 
@@ -22,6 +22,15 @@ const client: MoneyMovementServiceClient = new proto.money_movement.MoneyMovemen
     `${MONEY_MOVEMENT_GRPC_HOSTNAME}:${MONEY_MOVEMENT_GRPC_PORT}`,
     grpc.credentials.createInsecure(),
 );
+
+export function getBalance(userId: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        client.getBalance({ userId }, (err, response) => {
+            if (err) return reject(err);
+            resolve(response!.balance!);
+        });
+    });
+}
 
 export interface TransactParams {
     idempotencyKey: string;
