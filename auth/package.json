@@ -12,17 +12,21 @@
         "proto:gen": "proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=proto/ proto/*.proto",
         "seed": "tsx --env-file=.env scripts/seed.ts",
         "start": "node --env-file=.env build/src/index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "vitest run",
+        "test:unit": "vitest run --project unit",
+        "test:integration": "vitest run --project integration"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "@testcontainers/mysql": "^12.1.0",
         "@types/bcrypt": "^6.0.0",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/node": "^26.2.0",
         "tsc-alias": "^1.9.2",
         "tsx": "^4.23.12",
-        "typescript": "^7.0.2"
+        "typescript": "^7.0.2",
+        "vitest": "^5.0.1"
     },
     "dependencies": {
         "@grpc/grpc-js": "^1.14.4",

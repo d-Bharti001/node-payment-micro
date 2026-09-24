@@ -12,7 +12,9 @@
         "proto:gen": "proto-loader-gen-types --grpcLib=@grpc/grpc-js --longs=String --enums=String --defaults --oneofs --outDir=proto/ proto/*.proto",
         "seed": "tsx --env-file=.env scripts/seed.ts",
         "start": "node --env-file=.env build/src/index.js",
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "vitest run",
+        "test:unit": "vitest run --project unit",
+        "test:integration": "vitest run --project integration",
         "relay:dev": "tsx watch --env-file=.env src/outboxRelay.ts",
         "relay:start": "node --env-file=.env build/src/outboxRelay.js"
     },
@@ -27,9 +29,11 @@
         "mysql2": "^3.24.2"
     },
     "devDependencies": {
+        "@testcontainers/mysql": "^12.1.0",
         "@types/node": "^26.3.0",
         "tsc-alias": "^1.9.2",
         "tsx": "^4.23.12",
-        "typescript": "^7.0.2"
+        "typescript": "^7.0.2",
+        "vitest": "^5.0.1"
     }
 }
