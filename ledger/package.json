@@ -10,15 +10,19 @@
         "migrate:up": "node --env-file=.env node_modules/.bin/db-migrate up",
         "migrate:down": "node --env-file=.env node_modules/.bin/db-migrate down",
         "start": "node --env-file=.env build/src/index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "vitest run",
+        "test:unit": "vitest run --project unit",
+        "test:integration": "vitest run --project integration"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "@testcontainers/mysql": "^12.1.0",
         "@types/node": "^26.6.2",
         "tsc-alias": "^1.9.5",
         "tsx": "^4.23.15",
-        "typescript": "^7.0.2"
+        "typescript": "^7.0.2",
+        "vitest": "^5.0.1"
     },
     "dependencies": {
         "db-migrate": "^0.11.14",

@@ -17,7 +17,7 @@ spec:
       containers:
         - name: money-movement-outbox-relay
           image: dbharti001/money-movement-nodejs:1.0.0
-          command: ["node", "build/src/outboxRelay.js"]
+          command: ["node", "build/src/outbox/index.js"]
           envFrom:
             - configMapRef:
                 name: money-movement-config
