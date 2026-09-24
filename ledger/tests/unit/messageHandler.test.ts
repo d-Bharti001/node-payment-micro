@@ -22,7 +22,9 @@ function deliver(value: unknown) {
     return messageHandler({ message: { value: raw } } as unknown as EachMessagePayload);
 }
 
-beforeEach(() => vi.mocked(insertLedgerEntries).mockReset());
+beforeEach(() => {
+    vi.mocked(insertLedgerEntries).mockReset();
+});
 
 describe("messageHandler: valid events", () => {
     it("decodes the event and writes it to the ledger", async () => {
