@@ -1,6 +1,8 @@
 node_modules
 build
 manifests
+tests
+vitest.config.mts
 .env
 .env.*
 !.env.example
