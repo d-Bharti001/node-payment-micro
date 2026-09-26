@@ -8,7 +8,9 @@
         "dev": "tsx watch --env-file=.env src/server.ts",
         "proto:copy": "mkdir -p proto/auth proto/money_movement && cp -r ../auth/proto/* proto/auth && cp -r ../money_movement/proto/* proto/money_movement",
         "start": "node --env-file=.env build/src/server.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "vitest run",
+        "test:unit": "vitest run --project unit",
+        "test:integration": "vitest run --project integration"
     },
     "author": "",
     "license": "ISC",
@@ -22,10 +24,13 @@
     "devDependencies": {
         "@types/express": "^5.0.6",
         "@types/node": "^26.4.0",
+        "@types/supertest": "^7.2.1",
         "@types/swagger-jsdoc": "^6.0.4",
         "@types/swagger-ui-express": "^4.1.8",
+        "supertest": "^7.3.0",
         "tsc-alias": "^1.9.2",
         "tsx": "^4.23.12",
-        "typescript": "^7.0.2"
+        "typescript": "^7.0.2",
+        "vitest": "^5.0.1"
     }
 }
