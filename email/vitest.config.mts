@@ -5,7 +5,6 @@ import { defineConfig } from "vitest/config";
 const baseEnv = {
     NODE_ENV: "test", // also silences the logger
     SENDER_EMAIL: "payments@test.local",
-    KAFKA_BROKERS: "localhost:9092", // never connected to in tests
 };
 
 export default defineConfig({
@@ -21,7 +20,12 @@ export default defineConfig({
                 test: {
                     name: "unit",
                     include: ["tests/unit/**/*.test.ts"],
-                    env: { ...baseEnv, SMTP_HOST: "127.0.0.1", SMTP_PORT: "1" },
+                    env: {
+                        ...baseEnv,
+                        KAFKA_BROKERS: "localhost:9092", // never connected to in tests
+                        SMTP_HOST: "127.0.0.1",
+                        SMTP_PORT: "1",
+                    },
                 },
             },
             {
