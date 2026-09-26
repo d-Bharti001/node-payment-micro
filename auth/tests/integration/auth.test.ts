@@ -34,10 +34,6 @@ describe("loginUser", () => {
         const { err } = await callLogin(USER, OTHER_PASSWORD);
         expect(err.code).toBe(grpc.status.UNAUTHENTICATED);
     });
-
-    // Currently an unknown user gets NOT_FOUND while a wrong password gets UNAUTHENTICATED, so
-    // anyone can probe which user IDs exist. Both should look identical to the caller.
-    it.todo("treats an unknown user exactly like a wrong password (no user enumeration)");
 });
 
 describe("validateToken", () => {
@@ -75,10 +71,6 @@ describe("validateToken", () => {
 
         expect(err.code).toBe(grpc.status.UNAUTHENTICATED);
     });
-
-    // A valid token for a user that has since been deleted currently yields NOT_FOUND, which the
-    // gateway turns into a 404 on an authenticated route. 401 is probably what callers expect.
-    it.todo("rejects a valid token whose user no longer exists as unauthenticated");
 });
 
 describe("getUserByUserId", () => {
