@@ -3,7 +3,6 @@ import { fileURLToPath } from "node:url";
 
 const baseEnv = {
     NODE_ENV: "test",
-    KAFKA_BROKERS: "localhost:9092",
 };
 
 export default defineConfig({
@@ -22,6 +21,7 @@ export default defineConfig({
                     include: ["tests/unit/**/*.test.ts"],
                     env: {
                         ...baseEnv,
+                        KAFKA_BROKERS: "localhost:9092", // never connected to in tests
                         MYSQL_HOST: "127.0.0.1",
                         MYSQL_PORT: "1",
                         MYSQL_DATABASE: "x",
