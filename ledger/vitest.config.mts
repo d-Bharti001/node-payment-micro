@@ -4,7 +4,6 @@ import { defineConfig } from "vitest/config";
 // config.ts reads process.env at import time, so every test process needs these.
 const baseEnv = {
     NODE_ENV: "test", // also silences the logger
-    KAFKA_BROKERS: "localhost:9092", // never connected to in tests
 };
 
 export default defineConfig({
@@ -22,6 +21,7 @@ export default defineConfig({
                     include: ["tests/unit/**/*.test.ts"],
                     env: {
                         ...baseEnv,
+                        KAFKA_BROKERS: "localhost:9092", // never connected to in tests
                         MYSQL_HOST: "127.0.0.1",
                         MYSQL_PORT: "1",
                         MYSQL_DATABASE: "unused",
