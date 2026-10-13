@@ -40,10 +40,10 @@ export async function balanceOf(userId: string): Promise<bigint> {
 }
 
 // Inserts outbox rows the way insertOutboxEvent does (in the given order, so ids ascend).
-export async function seedOutbox(events: { key: string; payload: unknown }[]) {
-    for (const { key, payload } of events) {
+export async function seedOutbox(events: { key: string; payload: unknown; topic?: string }[]) {
+    for (const { key, payload, topic = "payments" } of events) {
         await dbPool.execute("INSERT INTO outbox (topic, message_key, payload) VALUES (?, ?, ?)", [
-            "payments",
+            topic,
             key,
             JSON.stringify(payload),
         ]);

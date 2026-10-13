@@ -1,0 +1,36 @@
+name: ledger
+
+on:
+  push:
+    branches: [dev-ledger]
+
+jobs:
+  ledger_test_build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ledger
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+
+      - name: Set up node.js environment
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ledger/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+      - name: Build
+        run: npm run build

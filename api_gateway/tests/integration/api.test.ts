@@ -50,10 +50,6 @@ describe("POST /login", () => {
         expect(res.body).toEqual({ error: "invalid credentials" });
     });
 
-    // Today an unknown user gets 404 while a wrong password gets 401, so anyone can probe which
-    // user IDs exist. Both should look identical to the caller.
-    it.todo("answers an unknown user exactly like a wrong password (no user enumeration)");
-
     it("does not leak internal details when the auth service is down", async () => {
         authService.loginUser.mockRejectedValue(
             grpcError(grpc.status.UNAVAILABLE, "connect ECONNREFUSED 10.0.0.5:9000"),
@@ -261,13 +257,6 @@ describe("routing, CORS and docs", () => {
         expect(res.status).toBe(204);
         expect(authService.validateToken).not.toHaveBeenCalled();
     });
-
-    // Today a malformed JSON body is answered with 500, but it is the client's mistake.
-    it.todo("answers a malformed JSON body with 400");
-
-    // Today the request's Origin is echoed back together with Allow-Credentials: true (any site
-    // is allowed), and a request without an Origin gets the literal text "undefined".
-    it.todo("only allows known origins, and sends no Allow-Origin header when there is no Origin");
 
     it("documents all three endpoints in the Swagger spec", async () => {
         const res = await request(app).get("/docs/swagger.json");

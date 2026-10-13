@@ -1,4 +1,4 @@
-import { Kafka } from "kafkajs";
+import { Kafka, Partitioners } from "kafkajs";
 
 import { KAFKA_BROKERS, KAFKA_CLIENT_ID } from "src/config/config";
 
@@ -7,7 +7,7 @@ const kafka = new Kafka({
     brokers: KAFKA_BROKERS,
 });
 
-const producer = kafka.producer();
+const producer = kafka.producer({ createPartitioner: Partitioners.DefaultPartitioner });
 let connected = false;
 
 export interface KafkaTopicMessage {
