@@ -1,14 +1,33 @@
-const NODE_ENV = process.env.NODE_ENV!;
+import { z } from "zod";
 
-export const DEVELOPMENT = NODE_ENV === "development";
-export const TEST = NODE_ENV === "test";
+const envSchema = z.object({
+    NODE_ENV: z.enum(["development", "test", "production"]),
+    GRPC_PORT: z.coerce.number().int().positive(),
+    MYSQL_HOST: z.string().min(1),
+    MYSQL_PORT: z.coerce.number().int().positive(),
+    MYSQL_DATABASE: z.string().min(1),
+    MYSQL_USER: z.string().min(1),
+    MYSQL_PASSWORD: z.string().min(1),
+    JWT_SIGNING_KEY: z.string().min(1),
+});
 
-export const GRPC_PORT = Number(process.env.GRPC_PORT!);
+const parsed = envSchema.safeParse(process.env);
 
-export const MYSQL_HOST = process.env.MYSQL_HOST!;
-export const MYSQL_PORT = Number(process.env.MYSQL_PORT!);
-export const MYSQL_DATABASE = process.env.MYSQL_DATABASE!;
-export const MYSQL_USER = process.env.MYSQL_USER!;
-export const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD!;
+if (!parsed.success) {
+    throw new Error(`Invalid environment variables:\n${z.prettifyError(parsed.error)}`);
+}
 
-export const JWT_SIGNING_KEY = process.env.JWT_SIGNING_KEY!;
+const env = parsed.data;
+
+export const DEVELOPMENT = env.NODE_ENV === "development";
+export const TEST = env.NODE_ENV === "test";
+
+export const GRPC_PORT = env.GRPC_PORT;
+
+export const MYSQL_HOST = env.MYSQL_HOST;
+export const MYSQL_PORT = env.MYSQL_PORT;
+export const MYSQL_DATABASE = env.MYSQL_DATABASE;
+export const MYSQL_USER = env.MYSQL_USER;
+export const MYSQL_PASSWORD = env.MYSQL_PASSWORD;
+
+export const JWT_SIGNING_KEY = env.JWT_SIGNING_KEY;
